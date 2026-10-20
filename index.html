@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#30cfdd" />
+    <title>Finger Dash 3D</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="style.css?v=2.7.0" />
+  </head>
+  <body>
+    <main id="app">
+      <div id="world"></div><div id="buildStatus" aria-live="polite">v2.7.0 · loading</div>
+      <section id="loadFailure" hidden role="alert"><h2>Game could not load</h2><p id="loadFailureText"></p><button id="retryLoad">Retry loading</button><a href="FingerDash-Offline.html">Open the single-file offline game</a><small>Use the offline file if this page was opened from Downloads or a file preview.</small></section>
+      <div class="top">
+        <div class="brand">FD<span> / 3D</span></div>
+        <div class="topActions">
+          <button id="settings" aria-label="Open settings">⚙</button
+          ><button id="sound" aria-label="Toggle sound">♪</button
+          ><button id="pause" aria-label="Pause game">Ⅱ</button>
+        </div>
+      </div>
+      <div id="hud">
+        <div class="score"><small>JAMS</small><strong id="jams">0</strong></div>
+        <div class="route">
+          <div>
+            <span id="level">LEVEL 1 · CANDY COAST</span
+            ><span id="distance">0 / 600 m</span>
+          </div>
+          <div class="bar"><i id="progress"></i></div>
+          <small id="totalProgress" hidden>0 / 600 m · CHECKPOINT 0 m</small>
+        </div>
+        <div class="score best">
+          <small>BEST</small><strong id="best">0</strong>
+        </div>
+      </div>
+      <div id="runStats">
+        <span>REWARDS <b id="jamRewards">0</b></span
+        ><span>SCORE <b id="score">0</b></span
+        ><span>♥ LIVES <b id="lives">0</b></span
+        ><span class="ammoStat">▪ AMMO <b id="ammo">0</b></span
+        ><span id="jumpStatus">JUMP READY</span>
+      </div>
+      <div id="powerHud">
+        <div id="activePowers">No active powers</div>
+        <small id="nextReward">NEXT REWARD · 10 JAMS</small>
+      </div>
+      <div id="unlockNotice" hidden role="status"></div>
+      <div id="countdown" hidden aria-live="assertive">
+        <strong>3</strong><span>GET YOUR FINGER READY</span>
+      </div>
+      <div id="toast" aria-live="polite"></div>
+      <div id="overlay">
+        <div class="eyebrow" id="eyebrow">TINY HERO. BIG ENERGY. · v2.7.0</div>
+        <h1 id="title">Finger<br /><em>Dash</em><sup>3D</sup></h1>
+        <p id="description">One little finger. A whole lot of adventure.</p>
+        <div id="intro">
+          <div class="pills">
+            <span>✦ Collect & grow</span><span>↔ Dodge & dash</span>
+          </div>
+          <div class="mode">
+            <button id="sprint">600 m sprint</button
+            ><button id="endless" class="selected">Endless</button
+            ><button id="levels">Levels ★</button>
+          </div>
+          <button id="heroPick" class="heroChip" type="button">
+            <span class="heroChipArt" id="heroChipArt"></span>
+            <span class="heroChipText"
+              ><small>YOUR RUNNER</small
+              ><strong id="heroChipName">Original Runner</strong></span
+            >
+            <span class="heroChipArrow">CHANGE ›</span>
+          </button>
+        </div>
+        <button id="continueRun" class="continueButton" hidden>
+          CONTINUE <span>→</span></button
+        ><button id="play" class="primary">LET’S DASH <span>→</span></button
+        ><button id="continueLevel" class="primary" hidden>
+          CONTINUE <span>→</span></button
+        ><div id="levelActions" class="levelActions" hidden>
+          <button id="replayLevel" class="secondary" hidden>REPLAY LEVEL</button
+          ><button id="levelsFromEnd" class="secondary" hidden>LEVEL MAP</button>
+        </div>
+        <div id="mapUnlock" class="mapUnlock" hidden></div>
+        <button id="restart" class="secondary" hidden>Restart run</button
+        ><button id="home" class="secondary" hidden>Back to menu</button>
+        <p class="hint" id="hint">
+          Swipe or drag to change lanes<br />Desktop: ← → / A D · Space to jump
+          · F shoot · P pause
+        </p>
+      </div>
+      <div id="bottom">
+        <span id="mapLabel">✦ MAP 1 · GREEN FOREST</span><span id="status">SWIPE TO STEER</span>
+      </div>
+      <div id="lanes">
+        <button id="left" aria-label="Move left">←</button
+        ><button id="jump" class="actionButton" disabled>
+          JUMP <small>SPACE / ↑</small></button
+        ><button id="shoot" class="actionButton shootButton" disabled>
+          SHOOT <small id="shootAmmo">0 AMMO</small></button
+        ><button id="power" class="actionButton powerButton" disabled>
+          <span id="powerLabel">AUTO</span>
+          <small id="powerReady">10 JAMS TO UNLOCK</small></button
+        ><span hidden>STAY SWEET. KEEP MOVING.</span
+        ><button id="right" aria-label="Move right">→</button>
+      </div>
+      <section id="levelPanel" hidden aria-labelledby="levelTitle">
+        <div class="levelSheet">
+          <div class="settingsHead">
+            <span class="eyebrow">CHOOSE A LEVEL</span
+            ><button id="closeLevels" aria-label="Close level selection">✕</button>
+          </div>
+          <h2 id="levelTitle">Level map</h2>
+          <p class="levelNote">
+            Clear a level to unlock the next one and save its checkpoint.
+            Every five levels unlock a new map; each level adds 400 m of new
+            distance on top of your saved checkpoint.
+          </p>
+          <p class="levelProgress" id="levelProgressLine">UNLOCKED 1 · CLEARED 0 · CHECKPOINT 0 m</p>
+          <div class="mapSection">
+            <div class="mapSectionHead">
+              <span>MAPS</span><small id="mapUnlockedLine">MAPS UNLOCKED 1 / 30</small>
+            </div>
+            <div id="mapStrip" class="mapStrip"></div>
+          </div>
+          <div id="levelGrid"></div>
+          <button id="levelMore" class="secondary">MORE LEVELS ↓</button>
+        </div>
+      </section>
+      <section id="characterPanel" hidden aria-labelledby="characterTitle">
+        <div class="charSheet">
+          <div class="settingsHead">
+            <span class="eyebrow">CHOOSE YOUR RUNNER</span
+            ><button id="closeCharacters" aria-label="Close runner selection">✕</button>
+          </div>
+          <h2 id="characterTitle">Runners</h2>
+          <p class="levelNote">
+            Finish a milestone level to unlock the next runner. Every runner
+            dashes exactly the same — same speed, jump, hitbox and powers.
+          </p>
+          <div class="charPreviewWrap">
+            <div class="charPreviewStage">
+              <canvas id="charPreview" width="168" height="168" hidden></canvas>
+              <div id="charPreviewArt" class="charPreviewArt"></div>
+            </div>
+            <div class="charPreviewMeta">
+              <strong id="charPreviewName">Original Runner</strong>
+              <span id="charPreviewNote">Currently running</span>
+            </div>
+          </div>
+          <div id="charGrid" class="charGrid" role="list" aria-label="Runners"></div>
+          <div class="charActions">
+            <button id="charBack" class="secondary" type="button">BACK</button>
+            <button id="charSelect" class="primary charSelectButton" type="button">
+              SELECT RUNNER
+            </button>
+          </div>
+        </div>
+      </section>
+      <dialog id="settingsDialog" aria-labelledby="settingsTitle">
+        <div class="settingsHead">
+          <span class="eyebrow">MAKE IT YOURS</span
+          ><button id="closeSettings" aria-label="Close settings">✕</button>
+        </div>
+        <h2 id="settingsTitle">Dash settings</h2>
+        <label class="setting" hidden
+          >Automatic powers<input
+            id="autoPowerSetting"
+            type="checkbox"
+            role="switch"
+            checked
+        /></label>
+        <p class="note">
+          Powers activate automatically every 10 collected Jams. Use JUMP for jump powers; Air Jump allows one extra midair jump.
+        </p>
+        <label class="setting"
+          >Sound effects<input
+            id="soundSetting"
+            type="checkbox"
+            role="switch" /></label
+        ><label class="setting"
+          >Vibration<input id="vibrationSetting" type="checkbox" role="switch"
+        /></label>
+        <p id="vibrationNote" class="note"></p>
+        <label class="setting"
+          >Graphics<select id="qualitySetting">
+            <option value="auto">Auto</option>
+            <option value="low">Battery saver</option>
+            <option value="high">High</option>
+          </select></label
+        >
+        <p class="note">
+          Auto lowers resolution and shadows if frames stay slow. No ads. No
+          accounts. Just a tiny adventure.
+        </p>
+        <p id="storageNote" class="note"></p>
+        <button id="newGame" class="secondary dangerButton">NEW GAME · RESET PROGRESS</button>
+        <details id="diagnostics"><summary>Game diagnostics</summary><pre id="diagnosticOutput">Loading…</pre></details>
+        <button id="doneSettings" class="primary">
+          ALL SET <span>✓</span>
+        </button>
+      </dialog>
+      <dialog id="resetDialog" aria-labelledby="resetTitle">
+        <div class="settingsHead">
+          <span class="eyebrow">START OVER</span
+          ><button id="cancelReset" aria-label="Cancel reset">✕</button>
+        </div>
+        <h2 id="resetTitle">Reset all progress?</h2>
+        <p class="note">
+          This clears every completed level, checkpoint and unlocked map. Your
+          best score and settings stay. This cannot be undone.
+        </p>
+        <button id="confirmReset" class="primary dangerButton">
+          YES, RESET EVERYTHING
+        </button>
+        <button id="cancelReset2" class="secondary">KEEP MY PROGRESS</button>
+      </dialog>
+    </main>
+    <script>
+    (function(){
+      const $=id=>document.getElementById(id);let ready=false;
+      $('play').disabled=true;$('play').textContent='LOADING GAME…';
+      for(const id of ['settings','sound'])$(id).disabled=true;
+      window.__fdLoadFailure=function(message){
+        $('loadFailureText').textContent=message||'A required game file was blocked or failed to load.';
+        $('loadFailure').hidden=false;$('buildStatus').textContent='v2.7.0 · load error';
+      };
+      const watchdog=setTimeout(()=>{if(!ready)window.__fdLoadFailure('Loading is taking too long. Retry, or open the self-contained offline game.')},15000);
+      window.__fdBootReady=function(mode){ready=true;clearTimeout(watchdog);$('loadFailure').hidden=true;$('play').disabled=false;$('play').innerHTML='LET’S DASH <span>→</span>';$('buildStatus').textContent='v2.7.0 · '+mode;for(const id of ['settings','sound'])$(id).disabled=false};
+      $('retryLoad').onclick=()=>location.reload();
+      window.addEventListener('error',e=>{if(e.message)window.__fdLoadFailure((ready?'Runtime error: ':'Startup error: ')+e.message)});
+      window.addEventListener('unhandledrejection',e=>window.__fdLoadFailure('Game error: '+String(e.reason?.message||e.reason)));
+    })();
+    </script>
+    <script type="module" src="game.js?v=2.7.0" onerror="window.__fdLoadFailure('The game script could not load. Open the single-file offline edition, or run this project through its HTTP server.')"></script>
+  <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a4d5a3e2ca1144b7',t:'MTc5MjQ3NDMyNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
